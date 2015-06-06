@@ -162,6 +162,7 @@
         });
 
         $scope.twits = Twitter.query({});
+
     }]);
 
     app.controller('FlatPageCtrl', ['$scope', '$window', 'FlatPage',

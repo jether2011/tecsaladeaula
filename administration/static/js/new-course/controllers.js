@@ -3,8 +3,8 @@
     var app = angular.module('new-course');
 
     app.controller('CourseEditController',
-        ['$scope', '$window', '$modal', '$http', '$q', 'Course',  'CourseAuthor', 'Lesson', '$filter', 'youtubePlayerApi', 'VideoData', 'FormUpload',
-        function($scope, $window, $modal, $http , $q, Course,  CourseProfessor, Lesson, $filter, youtubePlayerApi, VideoData, FormUpload) {
+        ['$scope', '$window', '$modal', '$http', '$q', 'Course',  'CourseAuthor', 'Lesson', '$filter', 'youtubePlayerApi', 'VideoData', 'FormUpload', 'Enroll',
+        function($scope, $window, $modal, $http , $q, Course,  CourseProfessor, Lesson, $filter, youtubePlayerApi, VideoData, FormUpload, Enroll) {
 
             $scope.errors = {};
             var httpErrors = {
@@ -411,6 +411,17 @@
                     });
             };
 
+            $scope.enrollUser = function(course_id) {
+                $('#modal-subscribe-success').on('hidden.bs.modal', function(){
+                    location.reload();
+                });
+                Enroll.save({id: course_id}, function success(data) {
+                    $('#modal-subscribe').modal('toggle');
+                    $scope.registration_number = data.registration_number;
+
+                    $('#modal-subscribe-success').modal('show');
+                });
+            };
         }
     ]);
 

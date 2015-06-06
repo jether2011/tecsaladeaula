@@ -186,6 +186,24 @@ class EnrollCourseView(LoginRequiredMixin, RedirectView):
             return '{}?next={}'.format(reverse_lazy('accept_terms'), self.request.path)
 
 
+class EnrollCourseAPIView(viewsets.ModelViewSet):
+    model = CourseStudent
+
+    def create(self, request, **kwargs):
+        course_id = self.request.DATA['id']
+        course = Course.objects.get(id=course_id)
+
+        try:
+            course.enroll_student(self.request.user)
+            enroll = self.model.objects.get(course=course, user=self.request.user)
+            return Response(
+                {'registration_number': enroll.registration_number},
+                status=200
+            )
+        except Exception:
+            return Response({}, status=400)
+
+
 class ResumeCourseView(LoginRequiredMixin, RedirectView):
     permanent = False
 
