@@ -9,7 +9,6 @@
 {% if in_admin %}
     {% block js %} {{block.super}}
     <script type="text/javascript" src="{% static 'js/new-course/app.js' %}">// must be the 1º</script>
-    <script type="text/javascript" src="{% static 'js/course/app.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/factories/timtec-models.js' %}">// must be the 2º</script>
     <script type="text/javascript" src="{% static 'js/filters/text.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/new-course/directives.js' %}"></script>
@@ -28,7 +27,7 @@
     {% endblock %}
 
     {% block body_attrs %}
-    ng-app="course"
+    ng-app="new-course"
     {% endblock %}
 {% endif %}
 
@@ -361,6 +360,35 @@ wrapper-course-intro
             <div class="col-md-7 col-sm-8 hidden-xs">
                 <!-- COURSE-SUMMARY -->
                 <section class="summary">
+
+                    <!-- COURSE TUITION -->
+                    <section class="tuition">
+                        <div class="page-header-double"><h3>{% trans 'Tuition' %}</h3></div>
+                        <div class="row">
+                            <div class="col-sm-7 col-md-7 col-xs-12">
+                                <p><span class="currency">R$</span><span class="value">{{ course.tuition }}</span></p>
+                            </div>
+                            {% if not in_admin %}
+                                {% if not user_is_enrolled %}
+                                <div class="col-sm-5 col-md-5 col-xs-12">
+                                    {% if user_enroll_is_pending %}
+                                        <a href="#" class="btn btn-lg btn-warning col-xs-12 js-login-required uppercase">{% trans "Pending" %}</a>
+
+                                    {% else %}
+                                        <a href="#" data-toggle="modal" data-target="#modal-subscribe" class="btn btn-lg btn-info col-xs-12 js-login-required uppercase">{% trans "Subscribe" %}</a>
+                                    {% endif %}
+                                <div>
+                                {% else %}
+                                    <span>Inscrição aprovada.</span>
+                                    {% if course.has_started %}
+                                        <a href="{% url "resume_course" course.slug %}" class="btn btn-success">Continuar curso</a>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </section>
+                    <!-- END COURSE TUITION -->
+
                     <!-- START DATE -->
                     {% if in_admin %}
                     <div class="page-header-double">
@@ -389,36 +417,11 @@ wrapper-course-intro
 
                     <!-- END ABSTRACT -->
 
-                    {% if user|is_enrolled:course and course.has_started %}
-                        <a href="{% url "resume_course" course.slug %}" class="btn btn-success">Continuar curso</a>
-                    {% endif %}
-
                     <!-- COURSE-INSTRUCTORS -->
                     {%  include '_course_authors_inline.html' %}
                     <!-- END COURSE-INSTRUCTORS -->
                 </section>
                 <!-- END COURSE-SUMMARY -->
-
-                <!-- COURSE TUITION -->
-                    <section class="tuition">
-                        <div class="page-header-double"><h3>{% trans 'Tuition' %}</h3></div>
-                        <div class="row">
-                            <div class="col-sm-7 col-md-7 col-xs-12">
-                                <p><span class="currency">R$</span><span class="value">{{ course.tuition }}</span></p>
-                            </div>
-                            {% if not user_is_enrolled %}
-                            <div class="col-sm-5 col-md-5 col-xs-12">
-                                {% if user_enroll_is_pending %}
-                                    <a href="#" class="btn btn-lg btn-warning col-xs-12 js-login-required uppercase">{% trans "Pending" %}</a>
-
-                                {% else %}
-                                    <a href="#" data-toggle="modal" data-target="#modal-subscribe" class="btn btn-lg btn-info col-xs-12 js-login-required uppercase">{% trans "Subscribe" %}</a>
-                                {% endif %}
-                            <div>
-                            {% endif %}
-                        </div>
-                    </section>
-                <!-- END COURSE TUITION -->
 
                 <!-- COURSE-LESSONS -->
                     {% if in_admin %}
